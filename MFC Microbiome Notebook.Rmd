@@ -1,12 +1,12 @@
 ---
 title: "MFC Microbiome Git Notebook"
 output:
+  html_document:
+    toc: yes
   html_notebook: default
-  html_document: default
   pdf_document: default
 ---
-This is code for my dissertation and eventual publication of this chapter as a research article. Extensively adapted from Josh Claypool's microbiome package.
-
+This is code for my dissertation and eventual publication of this chapter as a research article. Extensively adapted and shamelessly stolen from Josh Claypool's microbiome package (https://github.com/jtclaypool/microbiome).
 
 First we're going to set up R to to our target directory and clear the workspace.
 ```{r setup}
@@ -824,35 +824,35 @@ Third, which genes were enriched across each network cluster?
 ```{r}
 # Aggregate KOs by network cluster
 
-ptm <- proc.time()
-ko_metagenome_contributions <- read.table("C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/PICRUST/Exp15-microbiom COPY/ko_metagenome_contributions.tab",fill=TRUE)
-proc.time() - ptm
+# ptm <- proc.time()
+# ko_metagenome_contributions <- read.table("C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/PICRUST/Exp15-microbiom COPY/ko_metagenome_contributions.tab",fill=TRUE)
+# proc.time() - ptm
 ```
 
 
 # Yet to be done: Community Connects to the output
 Here we will use ModuleEigengenes from the WGCNA package in R. WGCNA will require several installations from the Bioconductor site. This was developed to link genetic studies to diseases and conditions in the medical field. While WGCNA has their own community detection algorith embedded, this wrapper allows us to substitute our own and establish correlation between our detected communities and variables we've recored. The output is ready to be plotted with ggplot2.
 ```{r}
-  #first we call the function to establish the relationships. 
-  biom_eigen=eigen_correlation(biom$RA.Otus[-c(5,8),],community = biom_info,metadata = meta[-(1:2),],categories = c("Xylanase.IU.g.dry.matter","Endoglucanase.IU..g.dry.matter","cCER"))
-  
-  #from there we can plot these correlations in a heatmap to visualize the relationship. 
-  ggplot(data=biom_eigen$melt_cor,aes(x=as.factor(variable), y=category,fill=value))+
-    geom_tile(colour="#B8B8B8")+
-    #geom_text(aes(label=value))+
-    scale_fill_gradient2("Degreee of \n Correlation",guide = "colourbar",high = "#7DEB5F",mid="#F0EE54",low="#F3633F",na.value="white",limits=c(-0.75,0.75))+ 
-    ylab("")+
-    xlab("Cluster/Module")+
-    labs(fill="Cluster to Deconstruction")+
-    scale_y_discrete(labels=c("Xylanase","Endoglucanase","cCER"))
-  
-  #we should probably filter on significance though
-  ggplot(data=biom_eigen$melt_cor,aes(x=as.factor(variable), y=category,fill=ifelse(pval<=0.1,value,NA)))+
-    geom_tile(colour="#B8B8B8")+
-    #geom_text(aes(label=value))+
-    scale_fill_gradient2("Degreee of \n Correlation",guide = "colourbar",high = "#7DEB5F",mid="#F0EE54",low="#F3633F",na.value="white",limits=c(-0.75,0.75))+ 
-    ylab("")+
-    xlab("Cluster/Module")+
-    labs(fill="Cluster to Deconstruction")+
-    scale_y_discrete(labels=c("Xylanase","Endoglucanase","cCER"))
+  # #first we call the function to establish the relationships. 
+  # biom_eigen=eigen_correlation(biom$RA.Otus[-c(5,8),],community = biom_info,metadata = meta[-(1:2),],categories = c("Xylanase.IU.g.dry.matter","Endoglucanase.IU..g.dry.matter","cCER"))
+  # 
+  # #from there we can plot these correlations in a heatmap to visualize the relationship. 
+  # ggplot(data=biom_eigen$melt_cor,aes(x=as.factor(variable), y=category,fill=value))+
+  #   geom_tile(colour="#B8B8B8")+
+  #   #geom_text(aes(label=value))+
+  #   scale_fill_gradient2("Degreee of \n Correlation",guide = "colourbar",high = "#7DEB5F",mid="#F0EE54",low="#F3633F",na.value="white",limits=c(-0.75,0.75))+ 
+  #   ylab("")+
+  #   xlab("Cluster/Module")+
+  #   labs(fill="Cluster to Deconstruction")+
+  #   scale_y_discrete(labels=c("Xylanase","Endoglucanase","cCER"))
+  # 
+  # #we should probably filter on significance though
+  # ggplot(data=biom_eigen$melt_cor,aes(x=as.factor(variable), y=category,fill=ifelse(pval<=0.1,value,NA)))+
+  #   geom_tile(colour="#B8B8B8")+
+  #   #geom_text(aes(label=value))+
+  #   scale_fill_gradient2("Degreee of \n Correlation",guide = "colourbar",high = "#7DEB5F",mid="#F0EE54",low="#F3633F",na.value="white",limits=c(-0.75,0.75))+ 
+  #   ylab("")+
+  #   xlab("Cluster/Module")+
+  #   labs(fill="Cluster to Deconstruction")+
+  #   scale_y_discrete(labels=c("Xylanase","Endoglucanase","cCER"))
 ```
