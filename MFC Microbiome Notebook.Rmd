@@ -832,9 +832,9 @@ proc.time() - ptm
 ```
 
 
-# Yet to be done: Community Connects to the output ----------------------------------------
-  # Here we will use ModuleEigengenes from the WGCNA package in R. WGCNA will require several installations from the Bioconductor site. This was developed to link genetic studies to diseases and conditions in the medical field. While WGCNA has their own community detection algorith embedded, this wrapper allows us to substitute our own and establish correlation between our detected communities and variables we've recored. The output is ready to be plotted with ggplot2.
-  
+# Yet to be done: Community Connects to the output
+Here we will use ModuleEigengenes from the WGCNA package in R. WGCNA will require several installations from the Bioconductor site. This was developed to link genetic studies to diseases and conditions in the medical field. While WGCNA has their own community detection algorith embedded, this wrapper allows us to substitute our own and establish correlation between our detected communities and variables we've recored. The output is ready to be plotted with ggplot2.
+```{r}
   #first we call the function to establish the relationships. 
   biom_eigen=eigen_correlation(biom$RA.Otus[-c(5,8),],community = biom_info,metadata = meta[-(1:2),],categories = c("Xylanase.IU.g.dry.matter","Endoglucanase.IU..g.dry.matter","cCER"))
   
@@ -857,4 +857,4 @@ proc.time() - ptm
     xlab("Cluster/Module")+
     labs(fill="Cluster to Deconstruction")+
     scale_y_discrete(labels=c("Xylanase","Endoglucanase","cCER"))
-  
+```
