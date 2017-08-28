@@ -8,13 +8,16 @@ output:
 This is code for my dissertation and eventual publication of this chapter as a research article. Extensively adapted from Josh Claypool's microbiome package.
 
 
-Clear RStudio
-```{r}
+First we're going to set up R to to our target directory and clear the workspace.
+```{r setup}
+knitr::opts_knit$set(root.dir = 'C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15')
+```
 
-  # cat(rep("\n",50)) # Clear Console
-  rm(list=ls(all=TRUE)) # clear workspace
-  graphics.off() # closes all graphics
-  setwd("C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15") # sets working directory
+```{r}
+# Clear R studio
+# cat(rep("\n",50)) # Clear Console
+rm(list=ls(all=TRUE)) # clear workspace
+graphics.off() # closes all graphics
 ```
 
 Install function for needed packages
