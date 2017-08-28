@@ -550,7 +550,7 @@ Now that we've explored our ecological metrics, let's dig into some of the netwo
  Some people will use rarefied counts but this removes data and recent studies suggest NOT to do this.
  So here, we will use relative abundance to just get familiar with the ideas until a centered-log-ratio is implemented. The reason relative abundance isn't great for networks is that OTU's with large counts produce false correlations due to their predominance.
 
-# Co-occurrence -----------------------------------------------------
+Co-occurrence
 ```{r, message = FALSE, warning=FALSE}
   
   # This is an area of networks where we study OTU's in the same environment that "co-occur". First we will filter data by co-occurence. Minimum recommended is 20%.
@@ -624,24 +624,22 @@ biom$RA.Otus.bristles <- biom$RA.Otus[meta[meta$Sample=="Bristles","Label"],]
   set.seed(101)
   (network_plot_bristles <- ggnet2(biom_netw_bristles$netw, size = 6, color = "tomato"))
 ```
+# Community Detection
 
-
-# Community Detection -----------------------------------------------------
-
-  # Now once you've seen your network, you are probably noticing clusters together and maybe that's interesting to you. If so, community detection is next up. This will allow you to find interacting groups of OTU's that may be functioning together in your samples and worth investigating more thoroughly. 
-  # As always multiple methods exist and most can be found within the igraph package of R. Two review papers comparing community detection algorithms can be found here and hereTo list a few algorithms:
-  # 
-  # fastgreedy *greedy modularity maximisation
-  # infomap *information compression
-  # louvain *multilevel modularity maximization
-  # walktrap
-  # uses small random walks to identify most likely neighbors
-  # walktrap (modularity optimized - this package)
-  # same as walktrap but optimizes based on modularity
-  # Each one of these algorithms can utilize the network you just created to detect these community niches.
+  Now once you've seen your network, you are probably noticing clusters together and maybe that's interesting to you. If so, community detection is next up. This will allow you to find interacting groups of OTU's that may be functioning together in your samples and worth investigating more thoroughly. 
+  As always multiple methods exist and most can be found within the igraph package of R. Two review papers comparing community detection algorithms can be found here and here.
+  To list a few algorithms:
   
-  #infomap community detection. Try the different detection algorithms to understand how different your niches might be broken up
+  fastgreedy *greedy modularity maximisation
+  infomap *information compression
+  louvain *multilevel modularity maximization
+  walktrap
+  uses small random walks to identify most likely neighbors
+  walktrap (modularity optimized - this package)
+  same as walktrap but optimizes based on modularity
+  Each one of these algorithms can utilize the network you just created to detect these community niches.
 ```{r}
+# infomap community detection. Try the different detection algorithms to understand how different your niches might be broken up
 biom_info=infomap.community(biom_netw$netw)
 
 #now add some color to your previous plot (Josh's Method)
