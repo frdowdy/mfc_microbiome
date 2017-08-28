@@ -1,2 +1,2 @@
 # mfc_microbiome
-Code for MFC microbiome analysis (Experiment 15)
+Code for MFC microbiome analysis (Experiment 15).
