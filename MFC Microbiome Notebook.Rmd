@@ -659,7 +659,7 @@ plot_ggnet
     theme_few()
 ```  
   
-# Keystone Microbes -------------------------------------------------------
+# Keystone Microbes
   
 Next we'll try and find some keystone microbes (if there are some!). This is largely built on heuristics from modularity of bee pollination networks. Nevertheless it is the gold-standard at the moment. Keystone are identified as either:
  Hub: forms a dense set of network connections within its own module such that the disappearance of such OTU may signify large changes for module structure or module collapse
