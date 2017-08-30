@@ -577,37 +577,19 @@ Co-occurrence
   ggnet2(biom_netw$netw, size = 6, color = "tomato")
   
 ```
-What if we run the same code but only on the bristle samples?
-```{r Networks in Bristle Samples}
+What if we run the same code but only on the bristle and planktonic bacteria samples?
+```{r Networks in Bristle and Planktonic Samples}
   
   # This is an area of networks where we study OTU's in the same environment that "co-occur". First we will filter data by co-occurence. Minimum recommended is 20%.
   
-# Filter biom$RA.Otus to just bristle samples
-biom$RA.Otus.bristles <- biom$RA.Otus[meta[meta$Sample=="Bristles","Label"],]
+# Filter biom$RA.Otus to just bristle and final planktonic samples
+biom$RA.Otus.bristles <- biom$RA.Otus[meta[meta$Sample=="Bristles"|meta$Sample=="Cycle 6","Label"],]
   
 #filter OTU's to 50% presence in all samples
   biom_fil_bristles=cooccur_filter(RA=biom$RA.Otus.bristles,co_per=0.5)
   
-  #run co-occurence. Taxon can be excluded and identified later if desired. Making a new function here since rcorr doesn't work with n<5
- cooccurrence2 <- function (data = "relative abundance", taxon = NULL, cor = 0.6, pval = 0.01) 
-{
-  require(igraph)
-  # require(Hmisc)
-  require(psych)
- 
-  corrMatrix <- corr.test(as.matrix(data),adjust="none",ci=F,method="pearson")
-  pAdjusted = p.adjust(corrMatrix$p, method = "BH")
-  corrMatrixMin = (((corrMatrix$r > cor) * 1 + (pAdjusted < pval) * 1) == 2) * 1
-  diag(corrMatrixMin) = 0
-  corrMatrixTax = corrMatrixMin[rowSums(corrMatrixMin) > 1, colSums(corrMatrixMin) > 1]
-  netw.corr = graph.adjacency(corrMatrixMin, mode = "undirected", weighted = TRUE)
-  netw.corr.trim = delete_vertices(netw.corr, igraph::degree(netw.corr) < 1)
-  ifelse(is.null(taxon), taxon.netw <- NULL, taxon.netw <- taxon[which(taxon[, 
-    1] %in% V(netw.corr.trim)$name), ])
-  return(list(corr = corrMatrix, corrMin = corrMatrixMin, 
-    netw = netw.corr.trim, taxon.netw = taxon.netw, pAdjusted = as.matrix(pAdjusted)))
-}
-  biom_netw_bristles=cooccurrence2(biom_fil_bristles,taxon = biom$taxon)
+  #run co-occurence. Taxon can be excluded and identified later if desired.
+  biom_netw_bristles=cooccurrence(data = biom_fil_bristles,taxon = biom$taxon,type="sp",cor=.6,pval=.05)
   
   #try plotting the data
   # plot.igraph(biom_netw$netw) # standard plot function for igraph package
@@ -625,7 +607,6 @@ biom$RA.Otus.bristles <- biom$RA.Otus[meta[meta$Sample=="Bristles","Label"],]
   (network_plot_bristles <- ggnet2(biom_netw_bristles$netw, size = 6, color = "tomato"))
 ```
 # Community Detection
-
   Now once you've seen your network, you are probably noticing clusters together and maybe that's interesting to you. If so, community detection is next up. This will allow you to find interacting groups of OTU's that may be functioning together in your samples and worth investigating more thoroughly. 
   As always multiple methods exist and most can be found within the igraph package of R. Two review papers comparing community detection algorithms can be found here and here.
   To list a few algorithms:
