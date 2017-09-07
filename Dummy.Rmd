@@ -1,0 +1,27 @@
+---
+title: "Dummy RMD"
+author: "F. Ryan Dowdy"
+date: "September 6, 2017"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_knit$set(root.dir = 'C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15')
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE, 
+                      message = FALSE,
+                      engine = "R", # Chunks will always have R code, unless noted
+                      error = TRUE,
+                      fig.path="Figures_Dummy/",  # Set the figure options
+                      fig.align = "center",
+                      dev='svg')
+
+```
+
+```{r dev='svg'}
+plot(1:20,(1:20)^2)
+```
+```{r}
+plot(1:20,(1:20)^2)
+```
+
