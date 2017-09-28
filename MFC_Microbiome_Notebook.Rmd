@@ -559,8 +559,8 @@ Now that we've explored our ecological metrics, let's dig into some of the netwo
  Some people will use rarefied counts but this removes data and recent studies suggest NOT to do this.
  So here, we will use relative abundance to just get familiar with the ideas until a centered-log-ratio is implemented. The reason relative abundance isn't great for networks is that OTU's with large counts produce false correlations due to their predominance.
 
-Co-occurrence
-```{r, message = FALSE, warning=FALSE}
+
+```{r Co-occurrence, message = FALSE, warning=FALSE}
   
   # This is an area of networks where we study OTU's in the same environment that "co-occur". First we will filter data by co-occurence. Minimum recommended is 20%.
   
@@ -593,6 +593,9 @@ What if we run the same code but only on the bristle and planktonic bacteria sam
   
 # Filter biom$RA.Otus to just bristle and final planktonic samples
 biom$RA.Otus.bristles <- biom$RA.Otus[meta[meta$Sample=="Bristles"|meta$Sample=="Cycle 6","Label"],]
+# Write to csv
+write.csv(biom$RA.Otus.bristles,"biom_RA_OTus_bristles.csv")
+
   
 #filter OTU's to 50% presence in all samples
   biom_fil_bristles=cooccur_filter(RA=biom$RA.Otus.bristles,co_per=0.5)
@@ -785,10 +788,10 @@ predicted_metagenome$RA.genes <- predicted_metagenome$RA.genes[match(meta$Label,
 genes_agg = aggregate(predicted_metagenome$RA.genes,by=list(meta$Sample),FUN=mean)
 
 
-# Convert wide format into long format table ------------------------------
+# Convert wide format into long format table
 genes_melt=melt(genes_agg,id="Group.1")
 
-# Filter by K01179 (Endoglucanase) and K05350 and K00430 (or whatever genes of interest)----
+# Filter by K01179 (Endoglucanase) and K05350 and K00430 (or whatever genes of interest)
 
 kos_exoelectrogenic <- read.csv("kos_exoelectrogenic.csv",header=FALSE,fileEncoding="UTF-8-BOM")
 
@@ -796,7 +799,7 @@ kos_exoelectrogenic <- read.csv("kos_exoelectrogenic.csv",header=FALSE,fileEncod
 genes_filtered <- genes_melt[which(genes_melt$variable %in% unlist(kos_exoelectrogenic)),]
 
 
-# Make heat map -----------------------------------------------------------
+# Make heat map
 
 ggplot(data=genes_filtered,aes(x=Group.1,y=variable,fill=value))+
   geom_tile()+
