@@ -673,7 +673,7 @@ Next we'll try and find some keystone microbes (if there are some!). This is lar
   
   this can be visualized as such. Sorry I haven't put a code for this yet but you get the table to plot with it as you will or export it to excel if you desire. 
 
-```{r}
+```{r zi pi plot}
 par(xpd=FALSE)
   plot(biom_zipi$P,biom_zipi$Z,
        ylim = c(-3.5,3),
@@ -712,7 +712,7 @@ Second, were exoelectrogenic genes enriched in our bristles?
 Third, which genes were enriched across each network cluster?
 
 First, which types of genes were best enriched in each of our sample groups?
-```{r, fig.width=9,fig.height=9}
+```{r which KOs were best enriched in each of our sample groups, fig.width=9,fig.height=9}
 # Let's try level 2 - it's got good granularity without too many different types of KOs
 l2_picrust <- read.biom(
   "C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/PICRUST/Exp15-microbiom COPY/predicted_metagenome.L2.txt",
@@ -773,7 +773,7 @@ melt_l2_agg <- ddply(melt_l2_agg, .(variable), transform, scale = scale(value)) 
   # ggtitle("Gene abundance over time")
 ```
 Second, were exoelectrogenic genes enriched in our bristles?
-```{r}
+```{r were exoelectrogenic genes enriched in our bristles}
 # Get data from PICRUSt JSON file----------------------------------------------------------------
 predicted_metagenome = read.biom("C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/PICRUST/Exp15-microbiom COPY/PICRUST Metagenome USE THIS.tab",new=T,metagenome=T)
 # predicted_metagenome$RA.genes[1:10,1:10] # View data # Note this gives relative abundance in percent from 0 to 100
@@ -819,7 +819,7 @@ ggplot(data=genes_filtered,aes(x=Group.1,y=variable,fill=rescale))+
 
 ```
 What if we run anova on these scaled gene relative abundances by sample? Fit rescale to Group.1
-```{r}
+```{r anova on scaled KO relative abundances by sample}
 genes_filtered$logrescale <- log10(genes_filtered$rescale)
 ggplot(data=genes_filtered, aes(x=factor(Group.1,levels = c("Sludge","Cycle 3","Cycle 6","Bristles","Cathode")), y = rescale)) +
     geom_boxplot(fill = "grey80", colour = "blue") +
@@ -856,11 +856,164 @@ ggplot(data=genes_filtered, aes(x=factor(Group.1,levels = c("Sludge","Cycle 3","
     writeLines("Results are significant. Reject null hypothesis.")
   }
 
-# Run Post-Hoc Tukey HSD between treatment groups ----
+# Run Post-Hoc Tukey HSD between treatment groups
   cat("\n")
   print(TukeyHSD(aov_kos))
 ```
+Can we show these differences another way by doing LDA on them?
+```{r LDA on KOs by sample}
+# https://www.r-bloggers.com/computing-and-visualizing-lda-in-r/
 
+# Get data
+#predicted_metagenome$RA.genes
+
+# Convert wide format into long format table
+genes_melt_LDA <- melt(as.matrix(predicted_metagenome$RA.genes))
+# head(genes_melt_LDA)
+
+# Filter by exoelectrogenic KOs
+genes_filtered_LDA <- genes_melt_LDA[which(genes_melt_LDA$X2 %in% unlist(kos_exoelectrogenic)),]
+# head(genes_filtered_LDA)
+
+# Unmelt
+genes_filtered_LDA <- dcast(data=genes_filtered_LDA,formula = X1~X2)
+
+# tag on sample type
+genes_filtered_LDA$Sample <- meta[match(genes_filtered_LDA$X1,meta$Label),"Sample"]
+# head(genes_filtered_LDA)
+# output for JMP
+# write.csv(genes_filtered_LDA,"genes_filtered_LDA.csv")
+
+# Run LDA
+packages(MASS)
+lda <- lda(formula = Sample ~ ., 
+         data = genes_filtered_LDA[,c(2:ncol(genes_filtered_LDA))] 
+         )
+lda
+
+# Get significance
+prop.lda = lda$svd^2/sum(lda$svd^2)
+
+# Plot
+plda <- predict(object = lda,
+                newdata = genes_filtered_LDA[,c(2:ncol(genes_filtered_LDA))])
+
+dataset = data.frame(Sample = genes_filtered_LDA[,"Sample"],
+                     lda = plda$x)
+
+(p1 <- ggplot(dataset) + geom_point(aes(lda.LD1, lda.LD2, colour = Sample, shape = Sample), size = 2.5) + 
+  labs(x = paste("LD1 (", percent(prop.lda[1]), ")", sep=""),
+       y = paste("LD2 (", percent(prop.lda[2]), ")", sep="")) +
+  theme_few()
+  )
+
+# Wilks Lambda
+dep.vars <- cbind(genes_filtered_LDA[,c(2:8)])
+lda_fit <- manova(as.matrix(dep.vars) ~ genes_filtered_LDA$Sample)
+summary(lda_fit, test="Wilks")
+```
+```{r LDA on KOs by sample with preprocessing, message=FALSE, warning=FALSE}
+# Preprocessing
+# Visualize
+multiplehist <- melt(genes_filtered_LDA[,c(2:ncol(genes_filtered_LDA))])
+ggplot(multiplehist,aes(x = value)) + 
+    facet_wrap(~variable,scales = "free") + 
+    geom_histogram(col="black", 
+                 fill="grey") +
+    theme_few()
+# Transformation
+packages(caret)
+packages(e1071)
+trans = preProcess(genes_filtered_LDA[,c(2:ncol(genes_filtered_LDA)-1)],
+                   c("BoxCox", "center", "scale"))
+kos_trans = data.frame(trans = predict(trans, genes_filtered_LDA[,c(2:ncol(genes_filtered_LDA)-1)]))
+# Visualize again
+multiplehist <- melt(kos_trans)
+ggplot(multiplehist,aes(x = value)) + 
+    facet_wrap(~variable,scales = "free") + 
+    geom_histogram(col="black", 
+                 fill="grey") +
+    theme_few()
+
+# Attach sample
+kos_trans$Sample <- genes_filtered_LDA$Sample
+genes_filtered_LDA_trans <- kos_trans
+
+# Run LDA
+packages(MASS)
+lda <- lda(formula = Sample ~ ., 
+         data = genes_filtered_LDA_trans[,c(2:ncol(genes_filtered_LDA))] 
+         )
+lda
+
+# Get significance
+prop.lda = lda$svd^2/sum(lda$svd^2)
+
+# Plot
+plda <- predict(object = lda,
+                newdata = genes_filtered_LDA_trans[,c(2:ncol(genes_filtered_LDA))])
+
+dataset = data.frame(Sample = genes_filtered_LDA_trans[,"Sample"],
+                     lda = plda$x)
+
+(p1 <- ggplot(dataset) + geom_point(aes(lda.LD1, lda.LD2, colour = Sample, shape = Sample), size = 2.5) + 
+  labs(x = paste("LD1 (", percent(prop.lda[1]), ")", sep=""),
+       y = paste("LD2 (", percent(prop.lda[2]), ")", sep="")) +
+  theme_few()
+  )
+
+# Wilks Lambda
+dep.vars <- cbind(genes_filtered_LDA_trans[,c(2:8)])
+lda_fit <- manova(as.matrix(dep.vars) ~ genes_filtered_LDA_trans$Sample)
+summary(lda_fit, test="Wilks")
+summary(aov(as.matrix(dep.vars) ~ genes_filtered_LDA_trans$Sample))
+```
+What if we run anova on these Box Cox transformed relative abundances by sample? Fit rescale to Group.1
+```{r anova on these Box Cox transformed relative abundances by sample}
+# Data
+data <- melt(genes_filtered_LDA_trans[,-1])
+
+
+ggplot(data, aes(x=factor(Sample,levels = c("Sludge","Cycle 3","Cycle 6","Bristles","Cathode")), y = value)) +
+    geom_boxplot(fill = "grey80", colour = "blue") +
+    scale_x_discrete() + xlab("Sample Group") +
+    ylab("Transformed exoelectrogenic 
+         KO relative abundance") +
+    theme_few()
+  
+# Fit a model using the lm function and look at the parameter estimates and standard errors for the treatment effects
+  # https://www.r-bloggers.com/one-way-analysis-of-variance-anova/
+  model = lm(value ~ Sample, data)
+  # We save the model fitted to the data in an object so that we can undertake various actions to study the goodness of the fit to the data and other model assumptions. 
+  # summary(model)
+  # An analysis of variance table for this model can be produced via the anova command
+  anova.model.genes.filtered = anova(model)
+  anova.model.genes.filtered
+  # The function confint is used to calculate confidence intervals on the treatment parameters, by default 95% confidence intervals
+  # confint(model)
+  
+# Alternative method (http://personality-project.org/r/r.guide/r.anova.html)
+  aov_kos = aov(value ~ Sample, data)  #do the analysis of variance
+  # cat("\n")
+  # summary(aov_diversity)                                    #show the summary table
+  cat("\n")
+  print(model.tables(aov_kos,"means"),digits=3)       #report the means and the number of subjects/cell
+  
+# Interpret the Omnibus ANOVA Test Results ----
+  pvaluecolumn <- anova.model.genes.filtered$"Pr(>F)" # Extracts p Value column
+  pvalue = pvaluecolumn[1] # Extracts first row from p value column
+  cat("\n")
+  cat("ANOVA p Value is",pvalue,"\n") # Displays p Value
+  if (pvalue>.05) {
+    writeLines("Results are not significant. Fail to reject null hypothesis.")
+  } else {
+    writeLines("Results are significant. Reject null hypothesis.")
+  }
+
+# Run Post-Hoc Tukey HSD between treatment groups
+  cat("\n")
+  print(TukeyHSD(aov_kos))
+```
 
 Third, which genes were enriched across each network cluster?
 ```{r}
