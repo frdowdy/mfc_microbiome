@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       message = FALSE,
                       engine = "R", # Chunks will always have R code, unless noted
                       error = TRUE,
-                      fig.path="Figures/",  # Set the figure options
+                      fig.path="C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/git_code/Figures/",  # Set the figure options
                       fig.align = "center",
                       dev='png')
 
@@ -1063,3 +1063,5 @@ Here we will use ModuleEigengenes from the WGCNA package in R. WGCNA will requir
   #   labs(fill="Cluster to Deconstruction")+
   #   scale_y_discrete(labels=c("Xylanase","Endoglucanase","cCER"))
 ```
+
+
