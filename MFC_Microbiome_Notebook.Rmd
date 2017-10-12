@@ -35,7 +35,7 @@ Install function for needed packages
   packages<-function(x){
     x<-as.character(match.call()[[2]])
     if (!require(x,character.only=TRUE)){
-      install.packages(pkgs=x,repos="http://cran.r-project.org")
+      install.packages(pkgs=x,repos="http://cran.r-project.org",dependencies = TRUE)
       require(x,character.only=TRUE)
     }
   }
@@ -47,11 +47,14 @@ Install function for needed packages
   packages(acepack) # dependency for microbiome package
   packages(base64enc) # dependency for microbiome package
   packages(gridExtra) # dependency for microbiome package
+  packages(htmltools)
+  packages(stringi)
   packages(htmlTable) # dependency for microbiome package
   packages(data.table) # dependency for microbiome package
   packages(permute) # dependency for microbiome package
   packages(ggthemes)
   packages(GGally)
+  packages(survival)
   source("https://bioconductor.org/biocLite.R")
   # biocLite("WGCNA")
   # biocLite("preprocessCore")
@@ -697,7 +700,7 @@ par(xpd=FALSE)
   zi.pi.ggplot
   
   #Let's return those OTUs of interest
-  library(dplyr)
+  packages(dplyr)
   biom_zipi_df <- as.data.frame(biom_zipi)
   filter(biom_zipi_df, P>=.62) # Connectors
   filter(biom_zipi_df, Z>=2.5) # Hubs
