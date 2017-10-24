@@ -1354,6 +1354,11 @@ ggplot(data = data, aes(x = "", y = Reads, fill = OTU )) +
     axis.title.y = element_blank()) + theme(legend.position='right') + guides(fill=guide_legend(nrow=3,byrow=TRUE))+
     ggtitle("Cluster 13 OTUs in Bristles")
 ```
+What taxonomies are associated with these OTUs?
+```{r}
+biom$taxon[biom$taxon$otus %in% data$OTU,]
+```
+
 # Yet to be done: Community Connects to the output
 Here we will use ModuleEigengenes from the WGCNA package in R. WGCNA will require several installations from the Bioconductor site. This was developed to link genetic studies to diseases and conditions in the medical field. While WGCNA has their own community detection algorith embedded, this wrapper allows us to substitute our own and establish correlation between our detected communities and variables we've recored. The output is ready to be plotted with ggplot2.
 ```{r}
