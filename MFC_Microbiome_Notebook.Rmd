@@ -94,7 +94,7 @@ Inspect data and write excel file
 ```
 
 Create rarefaction curves for data
-```{r}
+```{r rarefaction curves}
 # https://rdrr.io/rforge/vegan/man/rarefy.html
 packages(vegan)
 S <- specnumber(biom$RA.Otus) # observed number of species
@@ -141,7 +141,7 @@ Export Relative Abundance Data
 ```
 
 NMDS Plot
-```{r}
+```{r NMDS from vegan}
 veg=vegan_wrapper(biom$RA.Otus,meta = meta,category_1 = "Sample")
   
 #again the ggplot2 graph can be edited
@@ -179,7 +179,7 @@ hulls <- ddply(NMDS.data,.(Sample), find_hull)
 ```
 
 ANOVA on Shannon's Index
-```{r}
+```{r ANOVA on Shannons Index}
 # This is code to do ANOVA on Shannon's Index
   div = diversity(biom$RA.Otus, index = "shannon")
   div = data.frame(div)
@@ -217,7 +217,7 @@ ANOVA on Shannon's Index
   cat("\n")
   print(model.tables(aov_diversity,"means"),digits=3)       #report the means and the number of subjects/cell
   
-# Interpret the Omnibus ANOVA Test Results ----
+# Interpret the Omnibus ANOVA Test Results  
   pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p Value column
   pvalue = pvaluecolumn[1] # Extracts first row from p value column
   cat("\n")
@@ -228,7 +228,7 @@ ANOVA on Shannon's Index
     writeLines("Results are significant. Reject null hypothesis.")
   }
 
-# Run Post-Hoc Tukey HSD between treatment groups ----
+# Run Post-Hoc Tukey HSD between treatment groups  
   cat("\n")
   print(TukeyHSD(aov_diversity))
   
@@ -288,7 +288,7 @@ div = diversity(pivot.data, index = "shannon")
   cat("\n")
   print(model.tables(aov_diversity,"means"),digits=3)       #report the means and the number of subjects/cell
   
-# Interpret the Omnibus ANOVA Test Results ----
+# Interpret the Omnibus ANOVA Test Results  
   pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p Value column
   pvalue = pvaluecolumn[1] # Extracts first row from p value column
   cat("\n")
@@ -299,7 +299,7 @@ div = diversity(pivot.data, index = "shannon")
     writeLines("Results are significant. Reject null hypothesis.")
   }
 
-# Run Post-Hoc Tukey HSD between treatment groups ----
+# Run Post-Hoc Tukey HSD between treatment groups  
   cat("\n")
   print(TukeyHSD(aov_diversity))
   
@@ -344,7 +344,7 @@ div = diversity(pivot.data, index = "shannon")
   cat("\n")
   print(model.tables(aov_S,"means"),digits=3)       #report the means and the number of subjects/cell
   
-# Interpret the Omnibus ANOVA Test Results ----
+# Interpret the Omnibus ANOVA Test Results  
   pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p Value column
   pvalue = pvaluecolumn[1] # Extracts first row from p value column
   cat("\n")
@@ -355,7 +355,7 @@ div = diversity(pivot.data, index = "shannon")
     writeLines("Results are significant. Reject null hypothesis.")
   }
 
-# Run Post-Hoc Tukey HSD between treatment groups ----
+# Run Post-Hoc Tukey HSD between treatment groups  
   cat("\n")
   print(TukeyHSD(aov_S))
   
@@ -399,7 +399,7 @@ What if we try this again using our OTUs grouped by genera?
   cat("\n")
   print(model.tables(aov_S,"means"),digits=3)       #report the means and the number of subjects/cell
   
-# Interpret the Omnibus ANOVA Test Results ----
+# Interpret the Omnibus ANOVA Test Results  
   pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p Value column
   pvalue = pvaluecolumn[1] # Extracts first row from p value column
   cat("\n")
@@ -410,7 +410,7 @@ What if we try this again using our OTUs grouped by genera?
     writeLines("Results are significant. Reject null hypothesis.")
   }
 
-# Run Post-Hoc Tukey HSD between treatment groups ----
+# Run Post-Hoc Tukey HSD between treatment groups
   cat("\n")
   print(TukeyHSD(aov_S))
   
@@ -451,7 +451,7 @@ What if we try this again using our OTUs grouped by genera?
   cat("\n")
   print(model.tables(aov_J,"means"),digitJ=3)       #report the means and the number of subjects/cell
   
-# Interpret the Omnibus ANOVA Test Results ----
+# Interpret the Omnibus ANOVA Test Results
   pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p Value column
   pvalue = pvaluecolumn[1] # ExtractJ firJt row from p value column
   cat("\n")
@@ -462,7 +462,7 @@ What if we try this again using our OTUs grouped by genera?
     writeLines("Results are significant. Reject null hypothesis.")
   }
 
-# Run Post-Hoc Tukey HSD between treatment groups ----
+# Run Post-Hoc Tukey HSD between treatment groups  
   cat("\n")
   print(TukeyHSD(aov_J))
   
@@ -470,7 +470,7 @@ What if we try this again using our OTUs grouped by genera?
 
 
 Why are the bristles still showing higher diversity than our sludge inoculum?
-```{r, message = FALSE, warning=FALSE}
+```{r OTUs in bristles vs sludge, message = FALSE, warning=FALSE}
 # Aggregate OTUs by sample
 otus_by_sample <- biom$biom_tab
 otus_by_sample <- t(otus_by_sample)
@@ -563,7 +563,7 @@ Now that we've explored our ecological metrics, let's dig into some of the netwo
  So here, we will use relative abundance to just get familiar with the ideas until a centered-log-ratio is implemented. The reason relative abundance isn't great for networks is that OTU's with large counts produce false correlations due to their predominance.
 
 
-```{r Co-occurrence, message = FALSE, warning=FALSE}
+```{r Co-occurrence across all OTUs, message = FALSE, warning=FALSE}
   
   # This is an area of networks where we study OTU's in the same environment that "co-occur". First we will filter data by co-occurence. Minimum recommended is 20%.
   
@@ -601,11 +601,11 @@ write.csv(biom$RA.Otus.bristles,"biom_RA_OTus_bristles.csv")
 
   
 #filter OTU's to 50% presence in all samples
-  biom_fil_bristles=cooccur_filter(RA=biom$RA.Otus.bristles,co_per=0.5)
+  biom_fil=cooccur_filter(RA=biom$RA.Otus.bristles,co_per=0.5)
   
   #run co-occurence. Taxon can be excluded and identified later if desired.
-  biom_netw_bristles_pearson=cooccurrence(data = biom_fil_bristles,taxon = biom$taxon,type="pearson",cor=.6,pval=.05)
-  biom_netw_bristles_spearman=cooccurrence(data = biom_fil_bristles,taxon = biom$taxon,type="sp",cor=.6,pval=.05)
+  biom_netw=cooccurrence(data = biom_fil,taxon = biom$taxon,type="pearson",cor=.6,pval=.05)
+ 
   #try plotting the data
   # plot.igraph(biom_netw$netw) # standard plot function for igraph package
   # tkplot(biom_netw$netw) #interactive plot viewer
@@ -619,13 +619,9 @@ write.csv(biom$RA.Otus.bristles,"biom_RA_OTus_bristles.csv")
   
   # Visualize
   set.seed(101)
-  (network_plot_bristles_pearson <- ggnet2(biom_netw_bristles_pearson$netw, size = 6, color = "tomato", label=T, label.size=2))
-  (network_plot_bristles_spearman <- ggnet2(biom_netw_bristles_spearman$netw, size = 6, color = "tomato", label=T, label.size=2))
-  (network_plot_bristles_subtract_ps <- ggnet2(biom_netw_bristles_pearson$netw-biom_netw_bristles_spearman$netw, size = 6, color = "tomato", label=T, label.size=2))
-    
-  # Try labeling OTUs
-  # Try coloring according to sample
-  # Try iterating different cutoff points
+  (network_plot <- ggnet2(biom_netw$netw, size = 6, color = "tomato", label=T, label.size=2))
+ 
+
 ```
 # Community Detection
   Now once you've seen your network, you are probably noticing clusters together and maybe that's interesting to you. If so, community detection is next up. This will allow you to find interacting groups of OTU's that may be functioning together in your samples and worth investigating more thoroughly. 
@@ -640,17 +636,36 @@ write.csv(biom$RA.Otus.bristles,"biom_RA_OTus_bristles.csv")
   walktrap (modularity optimized - this package)
   same as walktrap but optimizes based on modularity
   Each one of these algorithms can utilize the network you just created to detect these community niches.
-```{r}
+```{r plot community networks,fig.width=12,fig.height=9}
 # infomap community detection. Try the different detection algorithms to understand how different your niches might be broken up
 biom_info=infomap.community(biom_netw$netw)
 
+
 #now add some color to your previous plot (Josh's Method)
-  # plot(biom_netw$netw,vertex.color=as.factor(biom_info$membership))
+  #plot(biom_netw$netw,vertex.color=as.factor(biom_info$membership))
   
-#Alternatively
+#Create a custom color scale
+n <- max(biom_info$membership)
+library(RColorBrewer)
+myColors <- colorRampPalette(brewer.pal(12, "Paired"))(n)
+names(myColors) <- levels(as.factor(biom_info$membership))
+colScale <- scale_colour_manual(name = "Cluster",values = myColors)
+
+#Plot with ggnet
+nodesize <- 8
 set.seed(101)
-plot_ggnet <- ggnet2(biom_netw$netw, size = 6, color = as.factor(biom_info$membership), palette = "Paired", color.legend = "Cluster")
-plot_ggnet
+(plot_ggnet <- ggnet2(biom_netw$netw, size = nodesize, 
+                      node.color = as.factor(biom_info$membership), 
+                      color.legend = "Cluster",
+                      label=T, 
+                      label.size=2)+
+    colScale+
+    guides(colour = guide_legend(override.aes = list(size=nodesize))))
+    
+
+```  
+```{r}
+
   #and to understand how these subcommunities are present in your overall community
   #this may show a warning message if the community modules/clusters exceed 13. This is just because of lacking a distinct palette color for each cluster. It may also be harder to interpret yourself. You can plot anyway with the following line.
   plot_module=barplot_module(data=biom$RA.Otus,niche = biom_info,meta = meta, categories = "Sample")
@@ -659,8 +674,10 @@ plot_ggnet
     ylab("Relative Abundance (%)")+ 
     theme(legend.title=element_text(),legend.position="right",plot.title = element_text(hjust=0.5))+
     theme_few()
-```  
-  
+```
+
+
+
 # Keystone Microbes
   
 Next we'll try and find some keystone microbes (if there are some!). This is largely built on heuristics from modularity of bee pollination networks. Nevertheless it is the gold-standard at the moment. Keystone are identified as either:
@@ -750,7 +767,7 @@ melt_l2_agg <- ddply(melt_l2_agg, .(variable), transform, rescale = scales::resc
 
 (l2_heatmap1 <- ggplot(data=melt_l2_agg,aes(x=Group.1,y=variable,fill=rescale))+
   geom_tile(color="white",size=.8)+ # puts padding in between colored cells
-  scale_fill_gradient2("Scaled gene relative abundance\n",guide="colourbar",high="steelblue",low="white")+
+  scale_fill_gradient2("Rescaled gene relative abundance\n",guide="colourbar",high="steelblue",low="white")+
   xlab("Sample")+
   ylab("KEGG Ortholog Group")+
   scale_x_discrete(expand = c(0, 0)) + 
@@ -760,7 +777,7 @@ melt_l2_agg <- ddply(melt_l2_agg, .(variable), transform, rescale = scales::resc
   ylim(rev(levels(melt_l2_agg$variable)))) # Puts alphabetically from top
   # ggtitle("Gene abundance over time")
 
-# What if we rescale and plot? https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/
+# What if we scale and plot? https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/
 melt_l2_agg <- ddply(melt_l2_agg, .(variable), transform, scale = scale(value)) # this rescales each value 0:1 by variable
 
 (l2_heatmap1 <- ggplot(data=melt_l2_agg,aes(x=Group.1,y=variable,fill=scale))+
@@ -777,17 +794,17 @@ melt_l2_agg <- ddply(melt_l2_agg, .(variable), transform, scale = scale(value)) 
 ```
 Second, were exoelectrogenic genes enriched in our bristles?
 ```{r were exoelectrogenic genes enriched in our bristles}
-# Get data from PICRUSt JSON file----------------------------------------------------------------
+# Get data from PICRUSt JSON file                
 predicted_metagenome = read.biom("C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/PICRUST/Exp15-microbiom COPY/PICRUST Metagenome USE THIS.tab",new=T,metagenome=T)
 # predicted_metagenome$RA.genes[1:10,1:10] # View data # Note this gives relative abundance in percent from 0 to 100
 
-# Modify data to align it-------------------------------------------------------------
+# Modify data to align it               -
 # meta$Label # uses metadata from the fir data set of Josh's microbiome package
 # rownames(predicted_metagenome$RA.genes) # see if row names match up in same order
 predicted_metagenome$RA.genes <- predicted_metagenome$RA.genes[match(meta$Label,rownames(predicted_metagenome$RA.genes)),]
 # rownames(predicted_metagenome$RA.genes)
 
-# Aggregate genes by sample ----
+# Aggregate genes by sample  
 genes_agg = aggregate(predicted_metagenome$RA.genes,by=list(meta$Sample),FUN=mean)
 
 
@@ -848,7 +865,7 @@ ggplot(data=genes_filtered, aes(x=factor(Group.1,levels = c("Sludge","Cycle 3","
   cat("\n")
   print(model.tables(aov_kos,"means"),digits=3)       #report the means and the number of subjects/cell
   
-# Interpret the Omnibus ANOVA Test Results ----
+# Interpret the Omnibus ANOVA Test Results  
   pvaluecolumn <- anova.model.genes.filtered$"Pr(>F)" # Extracts p Value column
   pvalue = pvaluecolumn[1] # Extracts first row from p value column
   cat("\n")
@@ -915,6 +932,7 @@ dep.vars <- cbind(genes_filtered_LDA[,c(2:8)])
 lda_fit <- manova(as.matrix(dep.vars) ~ genes_filtered_LDA$Sample)
 summary(lda_fit, test="Wilks")
 ```
+Now let's try preprocessing our numerical variables with Box Cox, centering, and scaling.
 ```{r LDA on KOs by sample with preprocessing, message=FALSE, warning=FALSE}
 # Preprocessing
 # Visualize
@@ -1031,15 +1049,311 @@ ggplot(data, aes(x=factor(Sample,levels = c("Sludge","Cycle 3","Cycle 6","Bristl
 ```
 
 Third, which genes were enriched across each network cluster?
-```{r}
-# Aggregate KOs by network cluster
 
-# ptm <- proc.time()
-# ko_metagenome_contributions <- read.table("C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/PICRUST/Exp15-microbiom COPY/ko_metagenome_contributions.tab",fill=TRUE)
-# proc.time() - ptm
+```{r aggregate KOs by network cluster}
+# Picrust table (takes 2 min to read)
+a <- proc.time()
+ko_metagenome_contributions <- read.table("C:/Users/Ryan/Google Drive/UC Davis/Publications/MFC Microbiome Paper - Experiment 15/PICRUST/Exp15-microbiom COPY/ko_metagenome_contributions.tab", header = T, sep = "\t", fill=TRUE)
+proc.time()-a
+# chop off unnecessary phylogeny
+ko_metagenome_contributions <- ko_metagenome_contributions[,-c(9:15)]
+# which quantitative column is of interest? GeneCountPerGenome because it's the only one that doesn't involve relative abundance normalized to sample
+
+# create lookup table
+otu_cluster_lookup <- data.frame("OTU" = biom_info$names,"Cluster" = biom_info$membership)
+# Lookup cluster number from lookup table
+ko_metagenome_contributions$Cluster <- otu_cluster_lookup[match(ko_metagenome_contributions$OTU,otu_cluster_lookup$OTU),"Cluster"]
+ko_metagenome_contributions[1:10,]
+
+#filter out NA clusters
+filt_ko_metagenome_contributions <- ko_metagenome_contributions[!is.na(ko_metagenome_contributions$Cluster),]
+#remove unnecessary columns
+filt_ko_metagenome_contributions <- filt_ko_metagenome_contributions[,-c(5:8)]
+head(filt_ko_metagenome_contributions)
+
+# within each cluster, sum GeneCountPerGenome by Gene
+filt_ko_metagenome_contributions <- aggregate(GeneCountPerGenome~Gene+Cluster,filt_ko_metagenome_contributions,sum)
+head(filt_ko_metagenome_contributions)
+
+# calc relative abundance of KOs within total KO GeneCountPerGenome in cluster
+require(dplyr)
+filt_ko_metagenome_contributions <- filt_ko_metagenome_contributions %>% group_by(Cluster) %>% mutate(relAbundByCluster = GeneCountPerGenome / sum(GeneCountPerGenome))
+
+#Test it worked (yes it did)
+filt_ko_metagenome_contributions[1,]
+aggregate(GeneCountPerGenome~Cluster,filt_ko_metagenome_contributions,sum)[1,]
+
+
+# filter by target KOs
+filt_ko_metagenome_contributions <- filt_ko_metagenome_contributions[which(filt_ko_metagenome_contributions$Gene %in% unlist(kos_exoelectrogenic)),]
+head(filt_ko_metagenome_contributions)
+
+# tidy up names
+colnames(filt_ko_metagenome_contributions) <- c("Gene","Cluster","GeneCount","relAbund")
+
+# Rescale 0 to 1 for heat map
+filt_ko_metagenome_contributions <- ddply(filt_ko_metagenome_contributions, .(Gene), transform, rescale = scales::rescale(relAbund))
+
+# plot heat map
+ggplot(data=filt_ko_metagenome_contributions,aes(x=factor(Cluster),y=Gene,fill=rescale))+
+  geom_tile()+
+  scale_fill_gradient2("Rescaled gene relative abundance \n",guide="colourbar",high="#FF5733",low="#FDFEFE")+
+  xlab("Cluster")+
+  ylab("KEGG Ortholog")+
+  theme_few()+
+ scale_x_discrete(expand = c(0,0))+
+ scale_y_discrete(expand = c(0,0)) +
+ coord_fixed(ratio=1)
 ```
 
+```{r}
+# Box cox, center, scale across KOs for all clusters
+# Preprocessing
+# Visualize
+ggplot(filt_ko_metagenome_contributions,aes(x = relAbund)) + 
+    facet_wrap(~Gene,scales = "free") + 
+    geom_histogram(col="black", 
+                 fill="grey") +
+    theme_few()
+# Transformation
+# unstack data
+data1 <- melt(filt_ko_metagenome_contributions[,c(1,2,4)], id.vars = c("Gene", "Cluster"))
+data1 <- dcast(data1,Cluster~Gene)
+# fill NA with zero
+data1[is.na(data1)] <- 0
+#preprocess
+packages(caret)
+packages(e1071)
+trans = preProcess(data1[,c(2:ncol(data1))], c("BoxCox", "center", "scale"))
+cluster_kos_trans = data.frame(trans = predict(trans, data1[,c(2:ncol(data1))]))
+# Visualize again
+multiplehist <- melt(cluster_kos_trans)
+ggplot(multiplehist,aes(x = value)) + 
+    facet_wrap(~variable,scales = "free") + 
+    geom_histogram(col="black", 
+                 fill="grey") +
+    theme_few()
 
+# Attach cluster number to transformed variables
+cluster_kos_trans$Cluster <- data1$Cluster
+
+```
+ANOVA on KOs in Clusters
+```{r ANOVA on KOs in Clusters}
+# Format data
+cluster_kos_trans_format <- cluster_kos_trans[c(ncol(cluster_kos_trans),1:ncol(cluster_kos_trans)-1)]
+data <- melt(cluster_kos_trans_format,id="Cluster")
+data[1] <- factor(unlist(data[1]))
+ggplot(data, aes(x=Cluster, y = value)) +
+    geom_boxplot(fill = "grey80", colour = "blue") +
+    scale_x_discrete() + xlab("Cluster") +
+    ylab("Rescaled KO relative abundance") +
+    theme_few()
+  
+# Fit a model using the lm function and look at the parameter estimates and standard errors for the treatment effects
+  # https://www.r-bloggers.com/one-way-analysis-of-variance-anova/
+  model = lm(value ~ Cluster, data = data)
+  # We save the model fitted to the data in an object so that we can undertake various actions to study the goodness of the fit to the data and other model assumptions. 
+  # summary(model)
+  # An analysis of variance table for this model can be produced via the anova command
+  anova.model = anova(model)
+  anova.model
+  # The function confint is used to calculate confidence intervals on the treatment parameters, by default 95% confidence intervals
+  # confint(model)
+  
+# Alternative method (http://personality-project.org/r/r.guide/r.anova.html)
+  aov_kos = aov(value~Cluster,data=data)  #do the analysis of variance
+  # cat("\n")
+  # summary(aov_diversity)                                    #show the summary table
+  cat("\n")
+  print(model.tables(aov_kos,"means"),digits=3)       #report the means and the number of subjects/cell
+  
+# Interpret the Omnibus ANOVA Test Results  
+  pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p Value column
+  pvalue = pvaluecolumn[1] # Extracts first row from p value column
+  cat("\n")
+  cat("ANOVA p Value is",pvalue,"\n") # Displays p Value
+  if (pvalue>.05) {
+    writeLines("Results are not significant. Fail to reject null hypothesis.")
+  } else {
+    writeLines("Results are significant. Reject null hypothesis.")
+  }
+
+# Run Post-Hoc Tukey HSD between treatment groups
+  cat("\n")
+ 
+Tukey <- TukeyHSD(aov_kos)
+Tukey$Cluster[Tukey$Cluster[,4]<.05,]
+
+```
+Interesting. Why do clusters 13 and 17 have so many exoelectrogenic genes? Let's make a bar chart of clusters 13 and 17 across our samples.
+```{r bar chart of clusters 13 and 17 across samples}
+#assign clusters of interest
+clusofinterest <- c(13,17)
+# make a long form table we can aggregate
+ix <- which(colnames(biom$biom_tab) %in% c("Kingdom","Phylum","Class","Order","Family","Genus","Species")) # remove taxonomy info
+data <- biom$biom_tab[,-ix] 
+data <- t(data)
+data <- melt(data)
+colnames(data) <- c("Label","OTU","Reads")
+#assign clusters to OTUs
+data$Cluster <- otu_cluster_lookup[match(data$OTU,otu_cluster_lookup$OTU),"Cluster"]
+# aggregate reads by label and cluster
+agg_data <- aggregate(data$Reads,
+    by = list(Label = data$Label, Cluster = data$Cluster),
+    FUN = function(x) c(sum = sum(x)))
+colnames(agg_data) <- c("Label","Cluster","Cluster_reads_in_label")
+# aggregate reads by label
+agg_data_label <- aggregate(data$Reads,
+    by = list(Label = data$Label),
+    FUN = function(x) c(sum = sum(x)))
+# attach to agg_data
+agg_data$label_reads <- agg_data_label[match(agg_data$Label,agg_data_label$Label),"x"]
+# RA
+agg_data$RA_cluster_in_label <- 100*agg_data$Cluster_reads_in_label/agg_data$label_reads
+#assign samples to labels
+agg_data$Sample <- meta[match(agg_data$Label,meta$Label),"Sample"]
+#filter for clusters of interest
+filter_agg_data <- agg_data[agg_data$Cluster %in% clusofinterest,]
+
+# get data in shape for plotting https://www.r-bloggers.com/building-barplots-with-error-bars/
+myData <- aggregate(filter_agg_data$RA_cluster_in_label,
+    by = list(Sample = filter_agg_data$Sample, Cluster = filter_agg_data$Cluster),
+    FUN = function(x) c(mean = mean(x), sd = sd(x),
+                        n = length(x)))
+
+myData <- do.call(data.frame, myData)
+myData$se <- myData$x.sd / sqrt(myData$x.n)
+
+colnames(myData) <- c("Sample", "Cluster", "mean", "sd", "n", "se")
+
+myData$names <- c(paste(myData$Sample,"/ Cluster",
+                        myData$Cluster))
+#Plot 
+limits <- aes(ymax = myData$mean + myData$sd,
+              ymin = myData$mean - myData$sd)
+
+p <- ggplot(data = myData, aes(x = factor(Sample), y = mean,
+               fill = factor(Cluster)))
+
+p + geom_bar(stat = "identity",
+             position = position_dodge(0.9)) +
+  geom_errorbar(limits, position = position_dodge(0.9),
+                width = 0.25) +
+  labs(x = "Sample", y = "Relative Abundance (%)") +
+  scale_fill_discrete(name = "Cluster")+
+  theme_few()
+```
+
+```{r anova on cluster 13 RA across samples}
+data <- filter_agg_data[filter_agg_data$Cluster %in% 13,]
+
+ggplot(data, aes(x=Sample, y = RA_cluster_in_label)) +
+    geom_boxplot(fill = "grey80", colour = "blue") +
+    scale_x_discrete() + xlab("Sample") +
+    ylab("Cluster 13 Relative Abundance (%)") +
+    theme_few()
+  
+# Fit a model using the lm function and look at the parameter estimates and standard errors for the treatment effects
+  # https://www.r-bloggers.com/one-way-analysis-of-variance-anova/
+  model = lm(RA_cluster_in_label ~ Sample, data = data)
+  # We save the model fitted to the data in an object so that we can undertake various actions to study the goodness of the fit to the data and other model assumptions. 
+  # summary(model)
+  # An analysis of variance table for this model can be produced via the anova command
+  anova.model = anova(model)
+  anova.model
+  
+  
+# Alternative method (http://personality-project.org/r/r.guide/r.anova.html)
+  aov_kos = aov(RA_cluster_in_label~Sample,data=data)  #do the analysis of variance
+  cat("\n")
+  summary(aov_kos)                                    #show the summary table
+  cat("\n")
+  print(model.tables(aov_kos,"means"),digits=3)       #report the means and the number of subjects/cell
+  
+# Interpret the Omnibus ANOVA Test Results  
+  pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p RA_cluster_in_label column
+  pvalue = pvaluecolumn[1] # Extracts first row from p RA_cluster_in_label column
+  cat("\n")
+  cat("ANOVA p value is",pvalue,"\n") # Displays p value
+  if (pvalue>.05) {
+    writeLines("Results are not significant. Fail to reject null hypothesis.")
+  } else {
+    writeLines("Results are significant. Reject null hypothesis.")
+  }
+
+# Run Post-Hoc Tukey HSD between treatment groups
+  cat("\n")
+ 
+TukeyHSD(aov_kos)
+```
+```{r anova on cluster 17 RA across samples}
+data <- filter_agg_data[filter_agg_data$Cluster %in% 17,]
+
+ggplot(data, aes(x=Sample, y = RA_cluster_in_label)) +
+    geom_boxplot(fill = "grey80", colour = "blue") +
+    scale_x_discrete() + xlab("Sample") +
+    ylab("Cluster 17 Relative Abundance (%)") +
+    theme_few()
+  
+# Fit a model using the lm function and look at the parameter estimates and standard errors for the treatment effects
+  # https://www.r-bloggers.com/one-way-analysis-of-variance-anova/
+  model = lm(RA_cluster_in_label ~ Sample, data = data)
+  # We save the model fitted to the data in an object so that we can undertake various actions to study the goodness of the fit to the data and other model assumptions. 
+  # summary(model)
+  # An analysis of variance table for this model can be produced via the anova command
+  anova.model = anova(model)
+  anova.model
+  
+  
+# Alternative method (http://personality-project.org/r/r.guide/r.anova.html)
+  aov_kos = aov(RA_cluster_in_label~Sample,data=data)  #do the analysis of variance
+  cat("\n")
+  summary(aov_kos)                                    #show the summary table
+  cat("\n")
+  print(model.tables(aov_kos,"means"),digits=3)       #report the means and the number of subjects/cell
+  
+# Interpret the Omnibus ANOVA Test Results  
+  pvaluecolumn <- anova.model$"Pr(>F)" # Extracts p RA_cluster_in_label column
+  pvalue = pvaluecolumn[1] # Extracts first row from p RA_cluster_in_label column
+  cat("\n")
+  cat("ANOVA p value is",pvalue,"\n") # Displays p value
+  if (pvalue>.05) {
+    writeLines("Results are not significant. Fail to reject null hypothesis.")
+  } else {
+    writeLines("Results are significant. Reject null hypothesis.")
+  }
+
+# Run Post-Hoc Tukey HSD between treatment groups
+  cat("\n")
+ 
+TukeyHSD(aov_kos)
+```
+```{r pie chart of Cluster 13 filled with OTUs}
+# https://stackoverflow.com/questions/42489277/multiple-ggplot-pie-charts-with-whole-pies
+# make a long form table we can aggregate
+ix <- which(colnames(biom$biom_tab) %in% c("Kingdom","Phylum","Class","Order","Family","Genus","Species")) # remove taxonomy info
+data <- biom$biom_tab[,-ix] 
+data <- t(data)
+data <- melt(data)
+colnames(data) <- c("Label","OTU","Reads")
+#assign clusters to OTUs
+data$Cluster <- otu_cluster_lookup[match(data$OTU,otu_cluster_lookup$OTU),"Cluster"]
+# assign samples to labels
+data$Sample <- meta[match(data$Label,meta$Label),"Sample"]
+# filter for bristles and cluster 13
+data <- data[data$Sample=="Bristles" & data$Cluster %in% 13,]
+data$OTU <- as.factor(data$OTU)
+# plot
+ggplot(data = data, aes(x = "", y = Reads, fill = OTU )) + 
+    geom_bar(stat = "identity", position = position_fill()) +
+    geom_text(aes(label = Reads), position = position_fill(vjust = 0.2)) +
+    coord_polar(theta = "y") +
+    facet_wrap(~ Label)  +
+    theme(axis.title.x = element_blank(),
+    axis.title.y = element_blank()) + theme(legend.position='right') + guides(fill=guide_legend(nrow=3,byrow=TRUE))+
+    ggtitle("Cluster 13 OTUs in Bristles")
+```
 # Yet to be done: Community Connects to the output
 Here we will use ModuleEigengenes from the WGCNA package in R. WGCNA will require several installations from the Bioconductor site. This was developed to link genetic studies to diseases and conditions in the medical field. While WGCNA has their own community detection algorith embedded, this wrapper allows us to substitute our own and establish correlation between our detected communities and variables we've recored. The output is ready to be plotted with ggplot2.
 ```{r}
